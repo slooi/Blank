@@ -1,9 +1,4 @@
 // Setup HTML
-// Create Element
-var inputEl = document.createElement("input");
-inputEl.style.position = "fixed";
-inputEl.style.display = "none";
-document.body.append(inputEl);
 
 //###########################
 // Setup Variables
@@ -40,17 +35,29 @@ const mousePos = {
 
 // Handles everything to do with selections
 class SelectionHandler {
+	// Can only  have one of this class
+
 	constructor() {
 		this.node;
+		this.nodeString;
+
+		this.leftOff;
+		this.rightOff;
+		this.nodeStringLength;
+	}
+	// Collect the CURRENT selection info
+	collectSelectionInfo() {
+		this.leftOff;
+		this.rightOff;
+		this.nodeStringLength;
 	}
 	getSelectionInfo() {
 		/* 
-			// RETURNS [
-				leftOffset, 
-				rightOffset, 
-				lengthOfSelected(excluding non visible characters like \n),
-				string that was selected
-			]
+		// RETURNS [
+			leftOffset, 
+			rightOffset, 
+			lengthOfSelected(excluding non visible characters like \n),
+		]
 		*/
 
 		// Get selection
@@ -65,14 +72,15 @@ class SelectionHandler {
 			selection.extentOffset > selection.anchorOffset
 				? selection.extentOffset
 				: selection.anchorOffset;
-		var len = selection.anchorNode.length;
-		var string = selection.anchorNode.textContent;
+		var nodeStringLength = selection.anchorNode.length;
+		var nodeString = selection.anchorNode.textContent; //!@#!@#!@# get rid of, use this.string instead
 
 		// Update node
 		this.node = selection.anchorNode;
+		this.nodeString = nodeString;
 
 		// RETURN
-		return [leftOff, rightOff, len, string];
+		return [leftOff, rightOff, nodeStringLength];
 	}
 	getNode() {
 		if (this.node) {
@@ -81,6 +89,117 @@ class SelectionHandler {
 			console.error("this.node is not set!!!");
 		}
 	}
+	getNodeString() {
+		return this.nodeString;
+	}
+	getSelectedString() {}
+	getAdjacentSelectedStrings() {
+		// postions
+		[leftOff, rightOff, nodeStringLength] = this.getSelectionInfo();
+
+		return [
+			nodeString.substring(0, leftOff),
+			nodeString.substring(rightOff, nodeStringLength),
+		];
+	}
+	// User has something selected
+	hasSelection() {
+		return window.getSelection().anchorNode.length > 0;
+	}
+
+	//###########################
+	//	USER INPUT SUBSCRIPTIONS
+	//###########################
+
+	// Subscription Conditionals
+	keyDownSubscription(e, cb) {
+		if (e.key === "Enter") {
+			// this.subscriptionExecution(e);
+			cb();
+		}
+	}
+
+	// Subscription Functionality Execution
+	subscriptionExecution(e) {}
+}
+
+//
+class TextField {
+	constructor() {
+		// Create and setup input element
+		this.inputEl = document.createElement("input");
+		this.inputEl.style.position = "fixed";
+		this.setVisibility(false);
+
+		// Append input element to document
+		document.body.append(this.inputEl);
+	}
+	//###########################
+	//	SETTERS
+	//###########################
+	// setPosition
+	setPosition(x, y) {
+		this.inputEl.style.left = x + "px";
+		this.inputEl.style.top = y + "px";
+	}
+	// setVisibility
+	setVisibility(isVisible) {
+		this.inputEl.style.display = isVisible ? "inline-block" : "none";
+	}
+	// setVal
+	clearVal() {
+		this.inputEl.value = "";
+	}
+	//###########################
+	//	GETTERS
+	//###########################
+	// getVal
+	getVal() {
+		return this.inputEl.value;
+	}
+	//###########################
+	//	OTHER
+	//###########################
+	// focus
+	focus() {
+		// Focus on the input element, but wait for 100ms to prevent the hotkey from being inputed into the input element
+		setTimeout(() => {
+			this.inputEl.focus();
+		}, 100);
+	}
+	//###########################
+	//	USER INPUT SUBSCRIPTIONS
+	//###########################
+
+	// Subscription Conditionals
+	keyDownSubscription(e) {
+		// If has something selected
+		if (selectionHandler.hasSelection()) {
+			// If "c" pressed
+			if (e.key === "c") {
+				console.log("after c!!!");
+				if (
+					mode === "normal" &&
+					!keysDown.Shift &&
+					!keysDown.Control &&
+					!keysDown.Alt
+				) {
+					this.subscriptionExecution();
+				}
+			}
+		}
+	}
+
+	// Subscription Functionality Execution
+	subscriptionExecution(e) {
+		console.log("I'm inside!");
+		mode = "edit";
+
+		this.setPosition(mousePos.x, mousePos.y);
+		this.setVisibility(true);
+		selectionHandler.getSelectionInfo();
+		this.focus();
+	}
 }
 
 //###########################
@@ -88,6 +207,7 @@ class SelectionHandler {
 //###########################
 
 selectionHandler = new SelectionHandler();
+textField = new TextField();
 
 // Handles user keyboard inputs
 function keyInputHandler(e, isDown) {
@@ -106,13 +226,6 @@ function keyInputHandler(e, isDown) {
 	}
 }
 
-// Position and display input field
-function positionInputField(x, y, isVisible) {
-	inputEl.style.left = x + "px";
-	inputEl.style.top = y + "px";
-	inputEl.style.display = isVisible ? "inline-block" : "none";
-}
-
 //###########################
 // Listeners
 //###########################
@@ -122,51 +235,25 @@ window.addEventListener("keyup", (e) => {
 
 window.addEventListener("keydown", (e) => {
 	keyInputHandler(e, true);
-	// If has something selected
-	if (window.getSelection().anchorNode.length > 0) {
-		// If "c" pressed
-		if (e.key === "c") {
-			console.log("after c!!!");
-			if (
-				mode === "normal" &&
-				!keysDown.Shift &&
-				!keysDown.Control &&
-				!keysDown.Alt
-			) {
-				console.log("I'm inside!");
-				mode = "edit";
 
-				positionInputField(mousePos.x, mousePos.y, true);
+	textField.keyDownSubscription(e);
+	selectionHandler.keyDownSubscription(e, () => {
+		const textFieldVal = textField.getVal();
+		if (textFieldVal !== "") {
+			// Generate new textContent
+			[strLeft, strRight] = selectionHandler.getAdjacentSelectedStrings();
+			var newStr = strLeft + textFieldVal + strRight;
 
-				// postions
-				[leftOff, rightOff, len, string] =
-					selectionHandler.getSelectionInfo();
-
-				// Strings
-				str1 = string.substring(0, leftOff);
-				str2 = string.substring(rightOff, len);
-				console.log("str1" + str1);
-				console.log("str2" + str2);
-
-				// Focus on the input element, but wait for 100ms to prevent the hotkey from being inputed into the input element
-				setTimeout(() => {
-					inputEl.focus();
-				}, 100);
-			}
-		}
-	}
-	if (e.key === "Enter") {
-		var newStr = str1 + inputEl.value + str2;
-		if (inputEl.value !== "") {
+			// Replace node textContent
 			selectionHandler.getNode().textContent = newStr;
 		}
 
-		// reset
-		inputEl.value = "";
-		mode = "normal";
+		// Reset textfield
+		textField.clearVal();
+		textField.setVisibility(false);
 
-		inputEl.style.display = "none";
-	}
+		mode = "normal";
+	});
 });
 
 window.addEventListener("mousemove", (e) => {
