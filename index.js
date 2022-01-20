@@ -45,43 +45,40 @@ class SelectionHandler {
 		this.rightOff;
 		this.nodeStringLength;
 	}
-	// Collect the CURRENT selection info
-	collectSelectionInfo() {
-		this.leftOff;
-		this.rightOff;
-		this.nodeStringLength;
-	}
-	getSelectionInfo() {
-		/* 
-		// RETURNS [
-			leftOffset, 
-			rightOffset, 
-			lengthOfSelected(excluding non visible characters like \n),
-		]
-		*/
-
+	// Stores the info in relating to the currently selected for later use
+	storeCurrentSelectionInfo() {
 		// Get selection
 		var selection = window.getSelection();
 
 		// Get selection related variables
-		var leftOff =
+		this.leftOff =
 			selection.anchorOffset < selection.extentOffset
 				? selection.anchorOffset
 				: selection.extentOffset;
-		var rightOff =
+
+		this.rightOff =
 			selection.extentOffset > selection.anchorOffset
 				? selection.extentOffset
 				: selection.anchorOffset;
-		var nodeStringLength = selection.anchorNode.length;
-		var nodeString = selection.anchorNode.textContent; //!@#!@#!@# get rid of, use this.string instead
 
+		this.nodeStringLength = selection.anchorNode.length;
+
+		this.nodeString = selection.anchorNode.textContent; //!@#!@#!@# get rid of, use this.string instead
 		// Update node
 		this.node = selection.anchorNode;
-		this.nodeString = nodeString;
-
-		// RETURN
-		return [leftOff, rightOff, nodeStringLength];
 	}
+	// getSelectionInfo() {
+	// 	/*
+	// 	// RETURNS [
+	// 		leftOffset,
+	// 		rightOffset,
+	// 		lengthOfSelected(excluding non visible characters like \n),
+	// 	]
+	// 	*/
+
+	// 	// RETURN
+	// 	return [leftOff, rightOff, nodeStringLength];
+	// }
 	getNode() {
 		if (this.node) {
 			return this.node;
@@ -94,12 +91,9 @@ class SelectionHandler {
 	}
 	getSelectedString() {}
 	getAdjacentSelectedStrings() {
-		// postions
-		[leftOff, rightOff, nodeStringLength] = this.getSelectionInfo();
-
 		return [
-			nodeString.substring(0, leftOff),
-			nodeString.substring(rightOff, nodeStringLength),
+			this.nodeString.substring(0, this.leftOff),
+			this.nodeString.substring(this.rightOff, this.nodeStringLength),
 		];
 	}
 	// User has something selected
@@ -120,7 +114,7 @@ class SelectionHandler {
 	}
 
 	// Subscription Functionality Execution
-	subscriptionExecution(e) {}
+	// subscriptionExecution(e) {}
 }
 
 //
@@ -197,7 +191,7 @@ class TextField {
 
 		this.setPosition(mousePos.x, mousePos.y);
 		this.setVisibility(true);
-		selectionHandler.getSelectionInfo();
+		selectionHandler.storeCurrentSelectionInfo();
 		this.focus();
 	}
 }
@@ -239,6 +233,8 @@ window.addEventListener("keydown", (e) => {
 	textField.keyDownSubscription(e);
 	selectionHandler.keyDownSubscription(e, () => {
 		const textFieldVal = textField.getVal();
+
+		// If textField has content
 		if (textFieldVal !== "") {
 			// Generate new textContent
 			[strLeft, strRight] = selectionHandler.getAdjacentSelectedStrings();
@@ -246,10 +242,10 @@ window.addEventListener("keydown", (e) => {
 
 			// Replace node textContent
 			selectionHandler.getNode().textContent = newStr;
-		}
 
-		// Reset textfield
-		textField.clearVal();
+			// Reset textfield
+			textField.clearVal();
+		}
 		textField.setVisibility(false);
 
 		mode = "normal";
