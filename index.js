@@ -228,12 +228,25 @@ function normalMode(e) {
 			textField.setVisibility(true);
 			selectionHandler.tagSelected();
 			textField.focus();
-		} else if (e.key === "d") {
+		} else if (e.key === "z") {
 			selectionHandler.tagSelected();
+
+			// Get selected text
 			const selected = selectionHandler.getSelection();
 			if (selected.length === 1) {
 				selectionHandler.replacedTaggedText(applyDakuten(selected));
-				console.log(selectionHandler.node);
+				selectionHandler.highlight();
+			}
+		} else if (e.key === "d") {
+			selectionHandler.tagSelected();
+			selectionHandler.replacedTaggedText("");
+		} else if (e.key === "x") {
+			selectionHandler.tagSelected();
+
+			// Get selecte text
+			const selected = selectionHandler.getSelection();
+			if (selected.length === 1) {
+				selectionHandler.replacedTaggedText(applyChiisai(selected));
 				selectionHandler.highlight();
 			}
 		}
@@ -276,8 +289,111 @@ window.addEventListener("mousemove", (e) => {
 	mousePos.y = e.clientY;
 });
 
-function applyDakuten(kana) {
-	switch (kana) {
+// ONLY WORKS FOR HIRAGANA ATM
+function applyChiisai(character) {
+	switch (character) {
+		// HIRAGANA
+		case "つ":
+			return "っ";
+		case "っ":
+			return "つ";
+		case "あ":
+			return "ぁ";
+		case "ぁ":
+			return "あ";
+		case "い":
+			return "ぃ";
+		case "ぃ":
+			return "い";
+		case "え":
+			return "ぇ";
+		case "ぇ":
+			return "え";
+		case "お":
+			return "ぉ";
+		case "ぉ":
+			return "お";
+		case "う":
+			return "ぅ";
+		case "ぅ":
+			return "う";
+		case "や":
+			return "ゃ";
+		case "ゃ":
+			return "や";
+		case "ゆ":
+			return "ゅ";
+		case "ゅ":
+			return "ゆ";
+		case "よ":
+			return "ょ";
+		case "ょ":
+			return "よ";
+		case "わ":
+			return "ゎ";
+		case "ゎ":
+			return "わ";
+
+		// KATAKANA
+		case "ア":
+			return "ァ";
+		case "ァ":
+			return "ア";
+		case "イ":
+			return "ィ";
+		case "ィ":
+			return "イ";
+		case "ウ":
+			return "ゥ";
+		case "ゥ":
+			return "ウ";
+		case "エ":
+			return "ェ";
+		case "ェ":
+			return "エ";
+		case "オ":
+			return "ォ";
+		case "ォ":
+			return "オ";
+		case "ツ":
+			return "ッ";
+		case "ッ":
+			return "ツ";
+		case "ヤ":
+			return "ャ";
+		case "ャ":
+			return "ヤ";
+		case "ユ":
+			return "ュ";
+		case "ュ":
+			return "ユ";
+		case "ヨ":
+			return "ョ";
+		case "ョ":
+			return "ヨ";
+		case "ワ":
+			return "ヮ";
+		case "ヮ":
+			return "ワ";
+
+		// EXTRAS
+		case "カ":
+			return "ヵ";
+		case "ヵ":
+			return "カ";
+		case "ケ":
+			return "ヶ";
+		case "ヶ":
+			return "ケ";
+
+		default:
+			return character;
+	}
+}
+
+function applyDakuten(character) {
+	switch (character) {
+		// HIRAGANA
 		case "か":
 			return "が";
 		case "き":
@@ -368,7 +484,98 @@ function applyDakuten(kana) {
 			return "へ";
 		case "ぽ":
 			return "ほ";
+		// KATAKANA
+		case "カ":
+			return "ガ";
+		case "キ":
+			return "ギ";
+		case "ク":
+			return "グ";
+		case "ケ":
+			return "ゲ";
+		case "コ":
+			return "ゴ";
+		case "ガ":
+			return "カ";
+		case "ギ":
+			return "キ";
+		case "グ":
+			return "ク";
+		case "ゲ":
+			return "ケ";
+		case "ゴ":
+			return "コ";
+		case "サ":
+			return "ザ";
+		case "シ":
+			return "ジ";
+		case "ス":
+			return "ズ";
+		case "セ":
+			return "ゼ";
+		case "ソ":
+			return "ゾ";
+		case "ザ":
+			return "サ";
+		case "ジ":
+			return "シ";
+		case "ズ":
+			return "ス";
+		case "ゼ":
+			return "セ";
+		case "ゾ":
+			return "ソ";
+		case "タ":
+			return "ダ";
+		case "チ":
+			return "ヂ";
+		case "ツ":
+			return "ヅ";
+		case "テ":
+			return "デ";
+		case "ト":
+			return "ド";
+		case "ダ":
+			return "タ";
+		case "ヂ":
+			return "チ";
+		case "ヅ":
+			return "ツ";
+		case "デ":
+			return "テ";
+		case "ド":
+			return "ト";
+		case "ハ":
+			return "バ";
+		case "ヒ":
+			return "ビ";
+		case "フ":
+			return "ブ";
+		case "ヘ":
+			return "ベ";
+		case "ホ":
+			return "ボ";
+		case "バ":
+			return "パ";
+		case "ビ":
+			return "ピ";
+		case "ブ":
+			return "プ";
+		case "ベ":
+			return "ペ";
+		case "ボ":
+			return "ポ";
+		case "パ":
+			return "ハ";
+		case "ピ":
+			return "ヒ";
+		case "プ":
+			return "フ";
+		case "ペ":
+			return "ヘ";
+		case "ポ":
+			return "ホ";
 		default:
-			return kana;
+			return character;
 	}
 }
