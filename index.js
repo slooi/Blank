@@ -38,6 +38,7 @@ class SelectionHandler {
 	// Can only  have one of this class
 
 	constructor() {
+		this.element;
 		this.node;
 		this.nodeString;
 
@@ -81,6 +82,26 @@ class SelectionHandler {
 			return false;
 		}
 		return window.getSelection().anchorNode.length > 0;
+	}
+	// returns the selected string
+	getSelection() {
+		return selectionHandler.nodeString.slice(
+			selectionHandler.leftOff,
+			selectionHandler.rightOff
+		);
+	}
+	// Highlights currently selected text
+	highlight() {
+		var textNode = this.node;
+		var selection = window.getSelection();
+		var range = document.createRange();
+
+		range.selectNodeContents(textNode);
+		range.setStart(textNode, this.leftOff);
+		range.setEnd(textNode, this.rightOff);
+
+		selection.removeAllRanges();
+		selection.addRange(range);
 	}
 
 	//#######################
@@ -207,9 +228,14 @@ function normalMode(e) {
 			textField.setVisibility(true);
 			selectionHandler.tagSelected();
 			textField.focus();
-		} else if (e.key === "x") {
-			// If "x" pressed
-			// selectionHandler.tagSelected();
+		} else if (e.key === "d") {
+			selectionHandler.tagSelected();
+			const selected = selectionHandler.getSelection();
+			if (selected.length === 1) {
+				selectionHandler.replacedTaggedText(applyDakuten(selected));
+				console.log(selectionHandler.node);
+				selectionHandler.highlight();
+			}
 		}
 	}
 }
@@ -249,3 +275,99 @@ window.addEventListener("mousemove", (e) => {
 	mousePos.x = e.clientX;
 	mousePos.y = e.clientY;
 });
+
+function applyDakuten(kana) {
+	if (kana == "か") {
+		return "が";
+	} else if (kana == "き") {
+		return "ぎ";
+	} else if (kana == "く") {
+		return "ぐ";
+	} else if (kana == "け") {
+		return "げ";
+	} else if (kana == "こ") {
+		return "ご";
+	} else if (kana == "が") {
+		return "か";
+	} else if (kana == "ぎ") {
+		return "き";
+	} else if (kana == "ぐ") {
+		return "く";
+	} else if (kana == "げ") {
+		return "け";
+	} else if (kana == "ご") {
+		return "こ";
+	} else if (kana == "さ") {
+		return "ざ";
+	} else if (kana == "し") {
+		return "じ";
+	} else if (kana == "す") {
+		return "ず";
+	} else if (kana == "せ") {
+		return "ぜ";
+	} else if (kana == "そ") {
+		return "ぞ";
+	} else if (kana == "ざ") {
+		return "さ";
+	} else if (kana == "じ") {
+		return "し";
+	} else if (kana == "ず") {
+		return "す";
+	} else if (kana == "ぜ") {
+		return "せ";
+	} else if (kana == "ぞ") {
+		return "そ";
+	} else if (kana == "た") {
+		return "だ";
+	} else if (kana == "ち") {
+		return "ぢ";
+	} else if (kana == "つ") {
+		return "づ";
+	} else if (kana == "て") {
+		return "で";
+	} else if (kana == "と") {
+		return "ど";
+	} else if (kana == "だ") {
+		return "た";
+	} else if (kana == "ぢ") {
+		return "ち";
+	} else if (kana == "づ") {
+		return "つ";
+	} else if (kana == "で") {
+		return "て";
+	} else if (kana == "ど") {
+		return "と";
+	} else if (kana == "は") {
+		return "ば";
+	} else if (kana == "ひ") {
+		return "び";
+	} else if (kana == "ふ") {
+		return "ぶ";
+	} else if (kana == "へ") {
+		return "べ";
+	} else if (kana == "ほ") {
+		return "ぼ";
+	} else if (kana == "ば") {
+		return "ぱ";
+	} else if (kana == "び") {
+		return "ぴ";
+	} else if (kana == "ぶ") {
+		return "ぷ";
+	} else if (kana == "べ") {
+		return "ぺ";
+	} else if (kana == "ぼ") {
+		return "ぽ";
+	} else if (kana == "ぱ") {
+		return "は";
+	} else if (kana == "ぴ") {
+		return "ひ";
+	} else if (kana == "ぷ") {
+		return "ふ";
+	} else if (kana == "ぺ") {
+		return "へ";
+	} else if (kana == "ぽ") {
+		return "ほ";
+	} else {
+		return kana;
+	}
+}
