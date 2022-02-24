@@ -45,8 +45,8 @@ class SelectionHandler {
 		this.rightOff;
 		this.nodeStringLength;
 	}
-	// Stores the info in relating to the currently selected for later use
-	storeCurrentSelectionInfo() {
+	// Tags currently selected content and stores relevant info for later use
+	tagSelected() {
 		// Get selection
 		var selection = window.getSelection();
 
@@ -67,18 +67,31 @@ class SelectionHandler {
 		// Update node
 		this.node = selection.anchorNode;
 	}
-	// getSelectionInfo() {
-	// 	/*
-	// 	// RETURNS [
-	// 		leftOffset,
-	// 		rightOffset,
-	// 		lengthOfSelected(excluding non visible characters like \n),
-	// 	]
-	// 	*/
+	replacedTaggedText(string) {
+		// Generate new textContent
+		const [strLeft, strRight] = this.getAdjacentToSelectedString();
+		var newStr = strLeft + string + strRight;
 
-	// 	// RETURN
-	// 	return [leftOff, rightOff, nodeStringLength];
-	// }
+		// Replace old text with new text
+		this.getNode().textContent = newStr;
+	}
+	// User has something selected
+	hasSelection() {
+		if (window.getSelection().anchorNode === null) {
+			return false;
+		}
+		return window.getSelection().anchorNode.length > 0;
+	}
+
+	//#######################
+	// HELPER FUNCTIONS
+	//#######################
+	getAdjacentToSelectedString() {
+		return [
+			this.nodeString.substring(0, this.leftOff),
+			this.nodeString.substring(this.rightOff, this.nodeStringLength),
+		];
+	}
 	getNode() {
 		if (this.node) {
 			return this.node;
@@ -86,35 +99,6 @@ class SelectionHandler {
 			console.error("this.node is not set!!!");
 		}
 	}
-	getNodeString() {
-		return this.nodeString;
-	}
-	getSelectedString() {}
-	getAdjacentSelectedStrings() {
-		return [
-			this.nodeString.substring(0, this.leftOff),
-			this.nodeString.substring(this.rightOff, this.nodeStringLength),
-		];
-	}
-	// User has something selected
-	hasSelection() {
-		return window.getSelection().anchorNode.length > 0;
-	}
-
-	//###########################
-	//	USER INPUT SUBSCRIPTIONS
-	//###########################
-
-	// Subscription Conditionals
-	keyDownSubscription(e, cb) {
-		if (e.key === "Enter") {
-			// this.subscriptionExecution(e);
-			cb();
-		}
-	}
-
-	// Subscription Functionality Execution
-	// subscriptionExecution(e) {}
 }
 
 //
@@ -161,39 +145,6 @@ class TextField {
 			this.inputEl.focus();
 		}, 100);
 	}
-	//###########################
-	//	USER INPUT SUBSCRIPTIONS
-	//###########################
-
-	// Subscription Conditionals
-	keyDownSubscription(e) {
-		// If has something selected
-		if (selectionHandler.hasSelection()) {
-			// If "c" pressed
-			if (e.key === "c") {
-				console.log("after c!!!");
-				if (
-					mode === "normal" &&
-					!keysDown.Shift &&
-					!keysDown.Control &&
-					!keysDown.Alt
-				) {
-					this.subscriptionExecution();
-				}
-			}
-		}
-	}
-
-	// Subscription Functionality Execution
-	subscriptionExecution(e) {
-		console.log("I'm inside!");
-		mode = "edit";
-
-		this.setPosition(mousePos.x, mousePos.y);
-		this.setVisibility(true);
-		selectionHandler.storeCurrentSelectionInfo();
-		this.focus();
-	}
 }
 
 //###########################
@@ -220,6 +171,63 @@ function keyInputHandler(e, isDown) {
 	}
 }
 
+function specialKeysNotDown() {
+	return !keysDown.Shift && !keysDown.Control && !keysDown.Alt;
+}
+
+//###
+// MODE
+//###
+function editMode(e) {
+	if (e.key === "Enter") {
+		const textFieldVal = textField.getVal();
+
+		// If textField has content
+		if (textFieldVal !== "") {
+			selectionHandler.replacedTaggedText(textFieldVal);
+
+			// Reset textfield
+			textField.clearVal();
+		}
+		textField.setVisibility(false);
+
+		mode = "normal";
+	}
+}
+
+// Selects mode based off user input
+function normalMode(e) {
+	// normal
+	if (selectionHandler.hasSelection() && specialKeysNotDown()) {
+		if (e.key === "c") {
+			// If "c" pressed
+			mode = "edit";
+
+			textField.setPosition(mousePos.x, mousePos.y);
+			textField.setVisibility(true);
+			selectionHandler.tagSelected();
+			textField.focus();
+		} else if (e.key === "x") {
+			// If "x" pressed
+			// selectionHandler.tagSelected();
+		}
+	}
+}
+
+// Executes code based off mode state
+function modeExecutor(e) {
+	console.log("wah!");
+	switch (mode) {
+		case "normal":
+			console.log("normal mode!");
+			normalMode(e);
+			break;
+		case "edit":
+			editMode(e);
+			break;
+	}
+}
+
 //###########################
 // Listeners
 //###########################
@@ -230,26 +238,11 @@ window.addEventListener("keyup", (e) => {
 window.addEventListener("keydown", (e) => {
 	keyInputHandler(e, true);
 
-	textField.keyDownSubscription(e);
-	selectionHandler.keyDownSubscription(e, () => {
-		const textFieldVal = textField.getVal();
+	// // Selects mode based off user input
+	// modeSelector(e)
 
-		// If textField has content
-		if (textFieldVal !== "") {
-			// Generate new textContent
-			[strLeft, strRight] = selectionHandler.getAdjacentSelectedStrings();
-			var newStr = strLeft + textFieldVal + strRight;
-
-			// Replace node textContent
-			selectionHandler.getNode().textContent = newStr;
-
-			// Reset textfield
-			textField.clearVal();
-		}
-		textField.setVisibility(false);
-
-		mode = "normal";
-	});
+	// Executes code based off mode state
+	modeExecutor(e);
 });
 
 window.addEventListener("mousemove", (e) => {
