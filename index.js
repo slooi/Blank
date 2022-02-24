@@ -277,97 +277,98 @@ window.addEventListener("mousemove", (e) => {
 });
 
 function applyDakuten(kana) {
-	if (kana == "か") {
-		return "が";
-	} else if (kana == "き") {
-		return "ぎ";
-	} else if (kana == "く") {
-		return "ぐ";
-	} else if (kana == "け") {
-		return "げ";
-	} else if (kana == "こ") {
-		return "ご";
-	} else if (kana == "が") {
-		return "か";
-	} else if (kana == "ぎ") {
-		return "き";
-	} else if (kana == "ぐ") {
-		return "く";
-	} else if (kana == "げ") {
-		return "け";
-	} else if (kana == "ご") {
-		return "こ";
-	} else if (kana == "さ") {
-		return "ざ";
-	} else if (kana == "し") {
-		return "じ";
-	} else if (kana == "す") {
-		return "ず";
-	} else if (kana == "せ") {
-		return "ぜ";
-	} else if (kana == "そ") {
-		return "ぞ";
-	} else if (kana == "ざ") {
-		return "さ";
-	} else if (kana == "じ") {
-		return "し";
-	} else if (kana == "ず") {
-		return "す";
-	} else if (kana == "ぜ") {
-		return "せ";
-	} else if (kana == "ぞ") {
-		return "そ";
-	} else if (kana == "た") {
-		return "だ";
-	} else if (kana == "ち") {
-		return "ぢ";
-	} else if (kana == "つ") {
-		return "づ";
-	} else if (kana == "て") {
-		return "で";
-	} else if (kana == "と") {
-		return "ど";
-	} else if (kana == "だ") {
-		return "た";
-	} else if (kana == "ぢ") {
-		return "ち";
-	} else if (kana == "づ") {
-		return "つ";
-	} else if (kana == "で") {
-		return "て";
-	} else if (kana == "ど") {
-		return "と";
-	} else if (kana == "は") {
-		return "ば";
-	} else if (kana == "ひ") {
-		return "び";
-	} else if (kana == "ふ") {
-		return "ぶ";
-	} else if (kana == "へ") {
-		return "べ";
-	} else if (kana == "ほ") {
-		return "ぼ";
-	} else if (kana == "ば") {
-		return "ぱ";
-	} else if (kana == "び") {
-		return "ぴ";
-	} else if (kana == "ぶ") {
-		return "ぷ";
-	} else if (kana == "べ") {
-		return "ぺ";
-	} else if (kana == "ぼ") {
-		return "ぽ";
-	} else if (kana == "ぱ") {
-		return "は";
-	} else if (kana == "ぴ") {
-		return "ひ";
-	} else if (kana == "ぷ") {
-		return "ふ";
-	} else if (kana == "ぺ") {
-		return "へ";
-	} else if (kana == "ぽ") {
-		return "ほ";
-	} else {
-		return kana;
+	switch (kana) {
+		case "か":
+			return "が";
+		case "き":
+			return "ぎ";
+		case "く":
+			return "ぐ";
+		case "け":
+			return "げ";
+		case "こ":
+			return "ご";
+		case "が":
+			return "か";
+		case "ぎ":
+			return "き";
+		case "ぐ":
+			return "く";
+		case "げ":
+			return "け";
+		case "ご":
+			return "こ";
+		case "さ":
+			return "ざ";
+		case "し":
+			return "じ";
+		case "す":
+			return "ず";
+		case "せ":
+			return "ぜ";
+		case "そ":
+			return "ぞ";
+		case "ざ":
+			return "さ";
+		case "じ":
+			return "し";
+		case "ず":
+			return "す";
+		case "ぜ":
+			return "せ";
+		case "ぞ":
+			return "そ";
+		case "た":
+			return "だ";
+		case "ち":
+			return "ぢ";
+		case "つ":
+			return "づ";
+		case "て":
+			return "で";
+		case "と":
+			return "ど";
+		case "だ":
+			return "た";
+		case "ぢ":
+			return "ち";
+		case "づ":
+			return "つ";
+		case "で":
+			return "て";
+		case "ど":
+			return "と";
+		case "は":
+			return "ば";
+		case "ひ":
+			return "び";
+		case "ふ":
+			return "ぶ";
+		case "へ":
+			return "べ";
+		case "ほ":
+			return "ぼ";
+		case "ば":
+			return "ぱ";
+		case "び":
+			return "ぴ";
+		case "ぶ":
+			return "ぷ";
+		case "べ":
+			return "ぺ";
+		case "ぼ":
+			return "ぽ";
+		case "ぱ":
+			return "は";
+		case "ぴ":
+			return "ひ";
+		case "ぷ":
+			return "ふ";
+		case "ぺ":
+			return "へ";
+		case "ぽ":
+			return "ほ";
+		default:
+			return kana;
 	}
 }
