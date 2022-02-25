@@ -53,13 +53,13 @@ class SelectionHandler {
 
 		// Get selection related variables
 		this.leftOff =
-			selection.anchorOffset < selection.extentOffset
+			selection.anchorOffset < selection.focusOffset // used to be extentOffset
 				? selection.anchorOffset
-				: selection.extentOffset;
+				: selection.focusOffset;
 
 		this.rightOff =
-			selection.extentOffset > selection.anchorOffset
-				? selection.extentOffset
+			selection.focusOffset > selection.anchorOffset
+				? selection.focusOffset
 				: selection.anchorOffset;
 
 		this.nodeStringLength = selection.anchorNode.length;
@@ -249,6 +249,16 @@ function normalMode(e) {
 			if (selected.length === 1) {
 				selectionHandler.replacedTaggedText(applyChiisai(selected));
 				selectionHandler.highlight();
+			}
+		} else if (key === "s") {
+			selectionHandler.tagSelected();
+			// Adds white space between TWO characters
+			const selected = selectionHandler.getSelection();
+			console.log(selected);
+			if (selected.length === 2) {
+				selectionHandler.replacedTaggedText(
+					selected[0] + " " + selected[1] // this method can only create one space of white space between letters &nbsp;
+				);
 			}
 		}
 	}
