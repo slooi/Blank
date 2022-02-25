@@ -219,8 +219,9 @@ function editMode(e) {
 // Selects mode based off user input
 function normalMode(e) {
 	// normal
+	const key = e.key;
 	if (selectionHandler.hasSelection() && specialKeysNotDown()) {
-		if (e.key === "c") {
+		if (key === "c") {
 			// If "c" pressed
 			mode = "edit";
 
@@ -228,7 +229,7 @@ function normalMode(e) {
 			textField.setVisibility(true);
 			selectionHandler.tagSelected();
 			textField.focus();
-		} else if (e.key === "z") {
+		} else if (key === "z") {
 			selectionHandler.tagSelected();
 
 			// Get selected text
@@ -237,10 +238,10 @@ function normalMode(e) {
 				selectionHandler.replacedTaggedText(applyDakuten(selected));
 				selectionHandler.highlight();
 			}
-		} else if (e.key === "d") {
+		} else if (key === "d") {
 			selectionHandler.tagSelected();
 			selectionHandler.replacedTaggedText("");
-		} else if (e.key === "x") {
+		} else if (key === "x") {
 			selectionHandler.tagSelected();
 
 			// Get selecte text
