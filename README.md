@@ -11,4 +11,4 @@ x - Toggle between the chiisai and normal versions of the kana (eg: あ=>ぁ, �
 z - Toggles the dakuten of the kana if possible (eg: か=>が, が=>か, す=>ず, つ=>づ, フ=>プ)
 
 # Potental Gotchas
-1) Convenience features only work for text pasted together (eg: if you copy multiple lines *seperately* by doing ctl+c twice, once for each line, you wil not be able to use *d* hotkey to delete them all at once. You'd have to delete each line individually.)
+1) Hotkey convenience features don't work across multiple pasted text simutaneously, you'll have to edit each group of pasted text individually. For example, if you copy two lines of text *seperately* by presing ctl+c twice - once for each line - you wil not be able to use *d* hotkey to delete both lines all at once. You'd have to delete each line individually.
